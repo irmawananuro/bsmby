@@ -35,3 +35,32 @@ def sanitize_and_store(entries_data, storage_dict):
             storage_dict[entry_id] = item
             
     return len(storage_dict), sum(1 for _ in entries_data if "id" in _)
+
+# === Stage 5: Добавь удаление записей и аккуратную обработку отсутствующих идентификаторов ===
+# Project: DailyBrief
+def remove_entry(entry_id: int) -> bool:
+    """Удаление записи по ID с безопасной обработкой отсутствующего идентификатора."""
+    if entry_id not in daily_brief_data:
+        print(f"Ошибка: запись с ID {entry_id} не найдена.")
+        return False
+    
+    del daily_brief_data[entry_id]
+    print(f"Успешно удалена запись с ID {entry_id}.")
+    return True
+
+def get_missing_ids() -> list[int]:
+    """Получение списка отсутствующих идентификаторов для отладки."""
+    expected_range = range(1, max(daily_brief_data.keys()) + 2 if daily_brief_data else 0)
+    existing_set = set(daily_brief_data.keys())
+    return [id for id in expected_range if id not in existing_set]
+
+if __name__ == "__main__":
+    # Демонстрация удаления и проверки целостности данных
+    test_id_to_remove = 999
+    success = remove_entry(test_id_to_remove)
+    
+    missing_list = get_missing_ids()
+    if missing_list:
+        print(f"Отсутствуют следующие ID записей: {missing_list}")
+    else:
+        print("Все записи в базе данных имеют корректные идентификаторы.")
